@@ -9,7 +9,7 @@ interface ScrollSequenceProps {
 }
 
 const ScrollSequence: React.FC<ScrollSequenceProps> = ({
-  totalFrames = 50,
+  totalFrames = 99, // Updated to match your total frames
   startFrame = 1,
   scrollHeight = 500,
   children
@@ -38,12 +38,15 @@ const ScrollSequence: React.FC<ScrollSequenceProps> = ({
           setImagesLoaded(loadedCount);
           
           if (loadedCount === totalFrames && canvasRef.current && contextRef.current) {
-            // Initial render of the first frame
-            contextRef.current.drawImage(img, 0, 0, canvasRef.current.width, canvasRef.current.height);
+            // Draw first frame once all images are loaded
+            const canvas = canvasRef.current;
+            const context = contextRef.current;
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(img, 0, 0, canvas.width, canvas.height);
           }
         };
-        img.onerror = () => {
-          console.error(`Failed to load image: /sequence/frame-${i}.jpg`);
+        img.onerror = (e) => {
+          console.error(`Failed to load image: /sequence/frame-${i}.jpg`, e);
           loadedCount++;
           setImagesLoaded(loadedCount);
         };
@@ -51,39 +54,34 @@ const ScrollSequence: React.FC<ScrollSequenceProps> = ({
       }
     };
     
-    // Setup canvas
+    // Setup canvas with proper dimensions
     if (canvasRef.current) {
       const canvas = canvasRef.current;
-      const context = canvas.getContext('2d');
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
       
+      // Set actual canvas dimensions
+      const updateCanvasSize = () => {
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        
+        // Maintain aspect ratio
+        if (images[currentFrame - 1]?.complete) {
+          const context = canvas.getContext('2d');
+          if (context) {
+            context.drawImage(images[currentFrame - 1], 0, 0, canvas.width, canvas.height);
+          }
+        }
+      };
+      
+      const context = canvas.getContext('2d', { alpha: false });
       if (context) {
         contextRef.current = context;
-        
-        // Set canvas dimensions
-        const updateCanvasSize = () => {
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight;
-          
-          // Redraw current frame if images are loaded
-          if (imagesRef.current.length > 0 && currentFrame > 0) {
-            const frameIndex = currentFrame - 1;
-            if (imagesRef.current[frameIndex]?.complete) {
-              context.drawImage(
-                imagesRef.current[frameIndex],
-                0, 0,
-                canvas.width, canvas.height
-              );
-            }
-          }
-        };
-        
-        // Initialize canvas size
+        context.imageSmoothingEnabled = true;
         updateCanvasSize();
         
-        // Handle resize
         window.addEventListener('resize', updateCanvasSize);
-        
-        // Clean up
         return () => {
           window.removeEventListener('resize', updateCanvasSize);
         };
@@ -92,83 +90,52 @@ const ScrollSequence: React.FC<ScrollSequenceProps> = ({
     
     imagesRef.current = images;
     preloadImages();
-  }, [totalFrames, startFrame]);
+  }, [totalFrames, startFrame, currentFrame]);
   
-  // Handle scroll events to update the current frame
+  // Handle scroll events
   useEffect(() => {
     const handleScroll = () => {
       if (containerRef.current) {
-        const scrollTop = window.pageYOffset;
-        const containerTop = containerRef.current.offsetTop;
-        const containerHeight = containerRef.current.offsetHeight;
-        
-        // Calculate scroll progress (0 to 1)
-        const scrollPosition = Math.min(
-          Math.max(0, (scrollTop - containerTop) / (containerHeight - window.innerHeight)),
-          1
-        );
-        
-        // Calculate frame based on scroll position
+        const rect = containerRef.current.getBoundingClientRect();
+        const scrollProgress = -rect.top / (rect.height - window.innerHeight);
         const frameIndex = Math.min(
-          Math.floor(scrollPosition * (totalFrames - 1)) + startFrame,
+          Math.max(
+            1,
+            Math.ceil(scrollProgress * (totalFrames - 1) + startFrame)
+          ),
           totalFrames
         );
         
         if (frameIndex !== currentFrame) {
           setCurrentFrame(frameIndex);
           
-          // Draw the new frame
-          if (canvasRef.current && contextRef.current && imagesRef.current[frameIndex - 1]) {
-            const context = contextRef.current;
+          if (canvasRef.current && contextRef.current && imagesRef.current[frameIndex - 1]?.complete) {
             const canvas = canvasRef.current;
-            
-            if (imagesRef.current[frameIndex - 1].complete) {
-              context.drawImage(
-                imagesRef.current[frameIndex - 1],
-                0, 0,
-                canvas.width, canvas.height
-              );
-            }
+            const context = contextRef.current;
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(imagesRef.current[frameIndex - 1], 0, 0, canvas.width, canvas.height);
           }
         }
       }
     };
     
     window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Initial call
     
-    // Initial call to set the correct frame
-    handleScroll();
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [currentFrame, startFrame, totalFrames]);
-  
-  // Handle loading text animation
-  useEffect(() => {
-    if (loadingTextRef.current) {
-      const loadingPercentage = Math.floor((imagesLoaded / totalImages) * 100);
-      loadingTextRef.current.textContent = `Loading ${loadingPercentage}%`;
-      
-      if (loadingPercentage === 100) {
-        loadingTextRef.current.classList.add('animate-fade-out');
-        setTimeout(() => {
-          if (loadingTextRef.current) {
-            loadingTextRef.current.style.display = 'none';
-          }
-        }, 1000);
-      }
-    }
-  }, [imagesLoaded, totalImages]);
-  
+
   return (
-    <div className="scroll-container" style={{ height: `${scrollHeight}vh` }} ref={containerRef}>
+    <div ref={containerRef} className="scroll-container" style={{ height: `${scrollHeight}vh` }}>
       <div className="sequence-container">
-        <canvas ref={canvasRef} />
+        <canvas 
+          ref={canvasRef} 
+          className="w-full h-full object-cover"
+        />
         {imagesLoaded < totalImages && (
           <div className="absolute inset-0 flex items-center justify-center bg-background z-50">
             <div ref={loadingTextRef} className="text-3xl font-display font-light">
-              Loading 0%
+              Loading {Math.floor((imagesLoaded / totalImages) * 100)}%
             </div>
           </div>
         )}

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import ScrollSequence from '@/components/ScrollSequence';
 import Navbar from '@/components/Navbar';
@@ -11,7 +10,6 @@ const Index: React.FC = () => {
   const galleryRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
   
-  // Intersection Observer for text animations
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -37,7 +35,7 @@ const Index: React.FC = () => {
       <Navbar />
       
       {/* Hero Section with Scroll Sequence */}
-      <ScrollSequence totalFrames={50} scrollHeight={500}>
+      <ScrollSequence totalFrames={99} scrollHeight={500}>
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="max-w-7xl w-full mx-auto px-6 md:px-10">
             <div className="max-w-2xl">
