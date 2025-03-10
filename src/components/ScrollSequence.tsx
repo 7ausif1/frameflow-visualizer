@@ -19,32 +19,46 @@ const ScrollSequence: React.FC<ScrollSequenceProps> = ({
   const [currentFrame, setCurrentFrame] = useState(startFrame);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
+  const [initialImageLoaded, setInitialImageLoaded] = useState(false);
   
-  // Preload images and setup canvas
+  // Immediately load and display the first frame
+  useEffect(() => {
+    if (!initialImageLoaded) {
+      const firstImage = new Image();
+      firstImage.src = `/sequence/frame-${startFrame}.jpg`;
+      firstImage.onload = () => {
+        if (canvasRef.current) {
+          const canvas = canvasRef.current;
+          const context = canvas.getContext('2d', { alpha: false });
+          
+          if (context) {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            
+            context.drawImage(firstImage, 0, 0, canvas.width, canvas.height);
+            setInitialImageLoaded(true);
+            contextRef.current = context;
+          }
+        }
+      };
+    }
+  }, [initialImageLoaded, startFrame]);
+  
+  // Preload images in background
   useEffect(() => {
     const images: HTMLImageElement[] = [];
-    let loadedCount = 0;
     
+    // Preload images asynchronously
     const preloadImages = () => {
       for (let i = 1; i <= totalFrames; i++) {
         const img = new Image();
         img.src = `/sequence/frame-${i}.jpg`;
         img.onload = () => {
-          loadedCount++;
-          
-          if (loadedCount === 1) {
-            // Draw the first frame as soon as it's loaded
-            if (canvasRef.current && contextRef.current) {
-              const canvas = canvasRef.current;
-              const context = contextRef.current;
-              context.clearRect(0, 0, canvas.width, canvas.height);
-              context.drawImage(img, 0, 0, canvas.width, canvas.height);
-            }
-          }
+          // Successful load
         };
         img.onerror = (e) => {
           console.error(`Failed to load image: /sequence/frame-${i}.jpg`, e);
-          loadedCount++;
         };
         images.push(img);
       }
@@ -62,38 +76,36 @@ const ScrollSequence: React.FC<ScrollSequenceProps> = ({
         canvas.width = rect.width;
         canvas.height = rect.height;
         
-        // Maintain aspect ratio
-        if (images[currentFrame - 1]?.complete) {
-          const context = canvas.getContext('2d');
-          if (context) {
-            context.drawImage(images[currentFrame - 1], 0, 0, canvas.width, canvas.height);
-          }
+        // If context exists and current frame image is loaded, draw it
+        if (contextRef.current && images[currentFrame - 1]?.complete) {
+          contextRef.current.drawImage(
+            images[currentFrame - 1], 
+            0, 0, 
+            canvas.width, 
+            canvas.height
+          );
         }
       };
       
-      const context = canvas.getContext('2d', { alpha: false });
-      if (context) {
-        contextRef.current = context;
-        context.imageSmoothingEnabled = true;
-        updateCanvasSize();
-        
-        window.addEventListener('resize', updateCanvasSize);
-        return () => {
-          window.removeEventListener('resize', updateCanvasSize);
-        };
-      }
+      updateCanvasSize();
+      window.addEventListener('resize', updateCanvasSize);
+      
+      return () => {
+        window.removeEventListener('resize', updateCanvasSize);
+      };
     }
     
     imagesRef.current = images;
     preloadImages();
-  }, [totalFrames, startFrame, currentFrame]);
+  }, [totalFrames, currentFrame]);
   
   // Handle scroll events
   useEffect(() => {
     const handleScroll = () => {
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
-        const scrollProgress = -rect.top / (rect.height - window.innerHeight);
+        const scrollProgress = Math.max(0, Math.min(1, -rect.top / (rect.height - window.innerHeight)));
+        
         const frameIndex = Math.min(
           Math.max(
             1,
