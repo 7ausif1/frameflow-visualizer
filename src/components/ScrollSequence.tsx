@@ -9,7 +9,7 @@ interface ScrollSequenceProps {
 }
 
 const ScrollSequence: React.FC<ScrollSequenceProps> = ({
-  totalFrames = 99, // Updated to match your total frames
+  totalFrames = 99,
   startFrame = 1,
   scrollHeight = 500,
   children
@@ -19,123 +19,109 @@ const ScrollSequence: React.FC<ScrollSequenceProps> = ({
   const [currentFrame, setCurrentFrame] = useState(startFrame);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
-  const [initialImageLoaded, setInitialImageLoaded] = useState(false);
   
-  // Immediately load and display the first frame
+  // Initialize canvas and load first frame
   useEffect(() => {
-    if (!initialImageLoaded) {
-      const firstImage = new Image();
-      firstImage.src = `/sequence/frame-${startFrame}.jpg`;
-      firstImage.onload = () => {
-        if (canvasRef.current) {
-          const canvas = canvasRef.current;
-          const context = canvas.getContext('2d', { alpha: false });
-          
-          if (context) {
-            const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-            
-            context.drawImage(firstImage, 0, 0, canvas.width, canvas.height);
-            setInitialImageLoaded(true);
-            contextRef.current = context;
-          }
-        }
-      };
+    if (canvasRef.current) {
+      const canvas = canvasRef.current;
+      const context = canvas.getContext('2d', { alpha: false });
+      if (context) {
+        contextRef.current = context;
+        
+        // Load and display first frame
+        const firstImage = new Image();
+        firstImage.src = `/sequence/frame-${startFrame}.jpg`;
+        firstImage.onload = () => {
+          const rect = canvas.getBoundingClientRect();
+          canvas.width = rect.width;
+          canvas.height = rect.height;
+          context.drawImage(firstImage, 0, 0, canvas.width, canvas.height);
+        };
+      }
     }
-  }, [initialImageLoaded, startFrame]);
+  }, [startFrame]);
   
-  // Preload images in background
+  // Preload all frames
   useEffect(() => {
     const images: HTMLImageElement[] = [];
     
-    // Preload images asynchronously
-    const preloadImages = () => {
-      for (let i = 1; i <= totalFrames; i++) {
-        const img = new Image();
-        img.src = `/sequence/frame-${i}.jpg`;
-        img.onload = () => {
-          // Successful load
-        };
-        img.onerror = (e) => {
-          console.error(`Failed to load image: /sequence/frame-${i}.jpg`, e);
-        };
-        images.push(img);
-      }
-    };
-    
-    // Setup canvas with proper dimensions
-    if (canvasRef.current) {
-      const canvas = canvasRef.current;
-      canvas.style.width = '100%';
-      canvas.style.height = '100%';
-      
-      // Set actual canvas dimensions
-      const updateCanvasSize = () => {
-        const rect = canvas.getBoundingClientRect();
-        canvas.width = rect.width;
-        canvas.height = rect.height;
-        
-        // If context exists and current frame image is loaded, draw it
-        if (contextRef.current && images[currentFrame - 1]?.complete) {
-          contextRef.current.drawImage(
-            images[currentFrame - 1], 
-            0, 0, 
-            canvas.width, 
-            canvas.height
-          );
-        }
-      };
-      
-      updateCanvasSize();
-      window.addEventListener('resize', updateCanvasSize);
-      
-      return () => {
-        window.removeEventListener('resize', updateCanvasSize);
-      };
+    for (let i = 1; i <= totalFrames; i++) {
+      const img = new Image();
+      img.src = `/sequence/frame-${i}.jpg`;
+      images.push(img);
     }
     
     imagesRef.current = images;
-    preloadImages();
-  }, [totalFrames, currentFrame]);
+  }, [totalFrames]);
   
-  // Handle scroll events
+  // Handle canvas resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (canvasRef.current && contextRef.current && imagesRef.current[currentFrame - 1]?.complete) {
+        const canvas = canvasRef.current;
+        const context = contextRef.current;
+        const rect = canvas.getBoundingClientRect();
+        
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        
+        context.drawImage(
+          imagesRef.current[currentFrame - 1],
+          0, 0,
+          canvas.width,
+          canvas.height
+        );
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [currentFrame]);
+  
+  // Handle scroll animation
   useEffect(() => {
     const handleScroll = () => {
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
-        const scrollProgress = Math.max(0, Math.min(1, -rect.top / (rect.height - window.innerHeight)));
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = rect.height - windowHeight;
         
-        const frameIndex = Math.min(
+        // Calculate progress (0 to 1) based on how far we've scrolled through the container
+        const scrollProgress = Math.max(0, Math.min(1, 
+          (-rect.top) / scrollableHeight
+        ));
+        
+        // Calculate the frame to show based on scroll progress
+        const frame = Math.min(
           Math.max(
-            1,
-            Math.ceil(scrollProgress * (totalFrames - 1) + startFrame)
+            startFrame,
+            Math.ceil(scrollProgress * (totalFrames - startFrame) + startFrame)
           ),
           totalFrames
         );
         
-        if (frameIndex !== currentFrame) {
-          setCurrentFrame(frameIndex);
+        if (frame !== currentFrame) {
+          setCurrentFrame(frame);
           
-          if (canvasRef.current && contextRef.current && imagesRef.current[frameIndex - 1]?.complete) {
+          // Update canvas with new frame
+          if (canvasRef.current && contextRef.current && imagesRef.current[frame - 1]?.complete) {
             const canvas = canvasRef.current;
             const context = contextRef.current;
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            context.drawImage(imagesRef.current[frameIndex - 1], 0, 0, canvas.width, canvas.height);
+            context.drawImage(imagesRef.current[frame - 1], 0, 0, canvas.width, canvas.height);
           }
         }
       }
     };
     
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial call
+    handleScroll(); // Initial check
     
     return () => window.removeEventListener('scroll', handleScroll);
   }, [currentFrame, startFrame, totalFrames]);
-
+  
   return (
-    <div ref={containerRef} className="scroll-container" style={{ height: `${scrollHeight}vh` }}>
-      <div className="sequence-container">
+    <div ref={containerRef} style={{ height: `${scrollHeight}vh` }}>
+      <div className="sticky top-0 w-full h-screen">
         <canvas 
           ref={canvasRef} 
           className="w-full h-full object-cover"
