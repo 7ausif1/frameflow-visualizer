@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import ScrollSequence from '@/components/ScrollSequence';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { ArrowDown, ArrowRight } from 'lucide-react';
+import { ArrowDown, ArrowRight, Sparkles } from 'lucide-react';
 
 const Index: React.FC = () => {
   const aboutRef = useRef<HTMLDivElement>(null);
@@ -35,43 +35,70 @@ const Index: React.FC = () => {
       <Navbar />
       
       {/* Hero Section with Scroll Sequence */}
-      <ScrollSequence totalFrames={99} scrollHeight={500}>
+      <ScrollSequence 
+        totalFrames={99} 
+        scrollHeight={300}
+        smoothness={1.5}
+      >
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="max-w-7xl w-full mx-auto px-6 md:px-10">
-            <div className="max-w-2xl">
-              <div className="mb-4">
+            <div className="max-w-2xl animate-fade-in">
+              <div className="mb-4 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary animate-pulse" />
                 <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium tracking-wide">
                   Introducing Sequence
                 </span>
               </div>
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-light tracking-tight mb-6">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-light tracking-tight mb-6 animate-slide-up">
                 Experience design in <span className="font-medium">motion</span>
               </h1>
-              <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-lg">
+              <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-lg animate-slide-up">
                 A minimal approach to visual storytelling through seamless scroll-based animations.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 animate-slide-up">
                 <a 
                   href="#about"
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-md font-medium transition-colors duration-300 text-center sm:text-left"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-md font-medium transition-all duration-300 text-center sm:text-left hover:scale-105"
                 >
                   Explore
                 </a>
                 <a 
                   href="#features"
-                  className="bg-secondary text-secondary-foreground hover:bg-secondary/80 px-6 py-3 rounded-md font-medium transition-colors duration-300 flex items-center justify-center sm:justify-start gap-2"
+                  className="bg-secondary text-secondary-foreground hover:bg-secondary/80 px-6 py-3 rounded-md font-medium transition-all duration-300 flex items-center justify-center sm:justify-start gap-2 group hover:scale-105"
                 >
-                  Learn more <ArrowRight size={16} />
+                  Learn more 
+                  <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
                 </a>
               </div>
             </div>
           </div>
         </div>
         
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-center">
+        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-center animate-fade-in">
           <span className="text-sm font-medium text-primary/70 block mb-2">Scroll to explore</span>
           <div className="animate-bounce">
             <ArrowDown size={20} className="text-primary/70 mx-auto" />
+          </div>
+        </div>
+      </ScrollSequence>
+
+      {/* Second Sequence Example */}
+      <ScrollSequence 
+        totalFrames={99} 
+        scrollHeight={200}
+        baseUrl="/sequence"
+        framePrefix="frame-"
+        frameExtension=".jpg"
+        smoothness={2}
+      >
+        <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+          <div className="text-center text-white animate-fade-in">
+            <h2 className="text-3xl md:text-5xl font-display font-light mb-4">
+              Another Sequence
+            </h2>
+            <p className="text-lg opacity-80">
+              Demonstrating reusability with different parameters
+            </p>
           </div>
         </div>
       </ScrollSequence>
