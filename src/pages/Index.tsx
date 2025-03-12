@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import ScrollSequence from '@/components/ScrollSequence';
 import Navbar from '@/components/Navbar';
@@ -39,32 +40,36 @@ const Index: React.FC = () => {
         totalFrames={99} 
         scrollHeight={300}
         smoothness={1.5}
+        speed={1.2}
       >
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="max-w-7xl w-full mx-auto px-6 md:px-10">
-            <div className="max-w-2xl animate-fade-in">
-              <div className="mb-4 flex items-center gap-2">
+            <div className="max-w-3xl">
+              <div className="mb-4 flex items-center gap-2 opacity-0 animate-fade-in" style={{ animationDelay: "0.3s", animationFillMode: "forwards" }}>
                 <Sparkles className="w-4 h-4 text-primary animate-pulse" />
                 <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium tracking-wide">
                   Introducing Sequence
                 </span>
               </div>
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-light tracking-tight mb-6 animate-slide-up">
-                Experience design in <span className="font-medium">motion</span>
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-light tracking-tight mb-6 opacity-0 animate-slide-up" style={{ animationDelay: "0.5s", animationFillMode: "forwards" }}>
+                Experience design in <span className="font-medium relative">
+                  motion
+                  <span className="absolute -bottom-1 left-0 w-full h-1 bg-primary/30 rounded-full"></span>
+                </span>
               </h1>
-              <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-lg animate-slide-up">
+              <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-lg opacity-0 animate-slide-up" style={{ animationDelay: "0.7s", animationFillMode: "forwards" }}>
                 A minimal approach to visual storytelling through seamless scroll-based animations.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 animate-slide-up">
+              <div className="flex flex-col sm:flex-row gap-4 opacity-0 animate-slide-up" style={{ animationDelay: "0.9s", animationFillMode: "forwards" }}>
                 <a 
                   href="#about"
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-md font-medium transition-all duration-300 text-center sm:text-left hover:scale-105"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-md font-medium transition-all duration-300 text-center sm:text-left hover:translate-y-[-2px] hover:shadow-lg"
                 >
                   Explore
                 </a>
                 <a 
                   href="#features"
-                  className="bg-secondary text-secondary-foreground hover:bg-secondary/80 px-6 py-3 rounded-md font-medium transition-all duration-300 flex items-center justify-center sm:justify-start gap-2 group hover:scale-105"
+                  className="bg-secondary text-secondary-foreground hover:bg-secondary/80 px-6 py-3 rounded-md font-medium transition-all duration-300 flex items-center justify-center sm:justify-start gap-2 group hover:translate-y-[-2px] hover:shadow-lg"
                 >
                   Learn more 
                   <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
@@ -74,7 +79,7 @@ const Index: React.FC = () => {
           </div>
         </div>
         
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-center animate-fade-in">
+        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-center opacity-0 animate-fade-in" style={{ animationDelay: "1.2s", animationFillMode: "forwards" }}>
           <span className="text-sm font-medium text-primary/70 block mb-2">Scroll to explore</span>
           <div className="animate-bounce">
             <ArrowDown size={20} className="text-primary/70 mx-auto" />
@@ -90,15 +95,38 @@ const Index: React.FC = () => {
         framePrefix="frame-"
         frameExtension=".jpg"
         smoothness={2}
+        speed={0.8}
       >
-        <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-          <div className="text-center text-white animate-fade-in">
-            <h2 className="text-3xl md:text-5xl font-display font-light mb-4">
-              Another Sequence
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/70 to-black/30 backdrop-blur-sm">
+          <div className="text-center text-white max-w-2xl px-6">
+            <h2 className="text-3xl md:text-5xl font-display font-light mb-6 opacity-0 text-reveal">
+              Customizable <span className="relative inline-block">
+                Parameters
+                <span className="absolute -bottom-1 left-0 w-full h-1 bg-white/30 rounded-full"></span>
+              </span>
             </h2>
-            <p className="text-lg opacity-80">
-              Demonstrating reusability with different parameters
+            <p className="text-lg opacity-80 mb-8 max-w-xl mx-auto text-reveal">
+              This second sequence demonstrates how you can reuse the component with custom 
+              settings for source path, speed, smoothness, and more.
             </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-reveal">
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+                <div className="font-medium mb-1">Base URL</div>
+                <div className="opacity-80">/sequence</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+                <div className="font-medium mb-1">Speed</div>
+                <div className="opacity-80">0.8x</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+                <div className="font-medium mb-1">Smoothness</div>
+                <div className="opacity-80">2</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+                <div className="font-medium mb-1">Height</div>
+                <div className="opacity-80">200vh</div>
+              </div>
+            </div>
           </div>
         </div>
       </ScrollSequence>
@@ -110,11 +138,14 @@ const Index: React.FC = () => {
         className="py-24 md:py-32 px-6 md:px-10 bg-background"
       >
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
             <div>
               <span className="text-sm font-medium text-primary/70 block mb-4">About</span>
               <h2 className="text-3xl md:text-4xl font-display font-light tracking-tight mb-6 text-reveal">
-                The perfect blend of motion and design
+                The perfect blend of <span className="relative inline-block">
+                  motion
+                  <span className="absolute -bottom-1 left-0 w-full h-1 bg-primary/30 rounded-full"></span>
+                </span> and design
               </h2>
               <p className="text-muted-foreground mb-6 text-reveal">
                 Inspired by minimalist design principles, Sequence creates an immersive visual journey that engages users through subtle animations and thoughtful interaction.
@@ -124,31 +155,29 @@ const Index: React.FC = () => {
               </p>
             </div>
             
-            <div className="bg-secondary rounded-2xl p-8 text-reveal">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                <div>
-                  <span className="text-4xl font-display font-light">01</span>
-                  <h3 className="text-lg font-medium mt-4 mb-2">Minimalism</h3>
-                  <p className="text-sm text-muted-foreground">Embracing simplicity in every aspect of design.</p>
-                </div>
-                
-                <div>
-                  <span className="text-4xl font-display font-light">02</span>
-                  <h3 className="text-lg font-medium mt-4 mb-2">Animation</h3>
-                  <p className="text-sm text-muted-foreground">Subtle motion that enhances rather than distracts.</p>
-                </div>
-                
-                <div>
-                  <span className="text-4xl font-display font-light">03</span>
-                  <h3 className="text-lg font-medium mt-4 mb-2">Precision</h3>
-                  <p className="text-sm text-muted-foreground">Attention to detail in every pixel and interaction.</p>
-                </div>
-                
-                <div>
-                  <span className="text-4xl font-display font-light">04</span>
-                  <h3 className="text-lg font-medium mt-4 mb-2">Usability</h3>
-                  <p className="text-sm text-muted-foreground">Intuitive experiences that feel natural and effortless.</p>
-                </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <div className="bg-secondary rounded-2xl p-8 text-reveal transform transition-transform duration-500 hover:translate-y-[-5px] hover:shadow-lg">
+                <span className="text-4xl font-display font-light">01</span>
+                <h3 className="text-lg font-medium mt-4 mb-2">Minimalism</h3>
+                <p className="text-sm text-muted-foreground">Embracing simplicity in every aspect of design.</p>
+              </div>
+              
+              <div className="bg-secondary rounded-2xl p-8 text-reveal transform transition-transform duration-500 hover:translate-y-[-5px] hover:shadow-lg" style={{ transitionDelay: "0.1s" }}>
+                <span className="text-4xl font-display font-light">02</span>
+                <h3 className="text-lg font-medium mt-4 mb-2">Animation</h3>
+                <p className="text-sm text-muted-foreground">Subtle motion that enhances rather than distracts.</p>
+              </div>
+              
+              <div className="bg-secondary rounded-2xl p-8 text-reveal transform transition-transform duration-500 hover:translate-y-[-5px] hover:shadow-lg" style={{ transitionDelay: "0.2s" }}>
+                <span className="text-4xl font-display font-light">03</span>
+                <h3 className="text-lg font-medium mt-4 mb-2">Precision</h3>
+                <p className="text-sm text-muted-foreground">Attention to detail in every pixel and interaction.</p>
+              </div>
+              
+              <div className="bg-secondary rounded-2xl p-8 text-reveal transform transition-transform duration-500 hover:translate-y-[-5px] hover:shadow-lg" style={{ transitionDelay: "0.3s" }}>
+                <span className="text-4xl font-display font-light">04</span>
+                <h3 className="text-lg font-medium mt-4 mb-2">Usability</h3>
+                <p className="text-sm text-muted-foreground">Intuitive experiences that feel natural and effortless.</p>
               </div>
             </div>
           </div>
@@ -165,15 +194,18 @@ const Index: React.FC = () => {
           <div className="text-center max-w-2xl mx-auto mb-16">
             <span className="text-sm font-medium text-primary/70 block mb-4">Features</span>
             <h2 className="text-3xl md:text-4xl font-display font-light tracking-tight mb-6 text-reveal">
-              Crafted with attention to every detail
+              Crafted with attention to <span className="relative inline-block">
+                every detail
+                <span className="absolute -bottom-1 left-0 w-full h-1 bg-primary/30 rounded-full"></span>
+              </span>
             </h2>
             <p className="text-muted-foreground text-reveal">
               Our approach combines technical excellence with design precision, creating experiences that stand out while maintaining focus on simplicity.
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-background rounded-2xl p-8 text-reveal">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            <div className="bg-background rounded-2xl p-8 text-reveal transform transition-all duration-500 hover:translate-y-[-5px] hover:shadow-lg">
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6">
                 <span className="text-primary font-medium">01</span>
               </div>
@@ -183,7 +215,7 @@ const Index: React.FC = () => {
               </p>
             </div>
             
-            <div className="bg-background rounded-2xl p-8 text-reveal">
+            <div className="bg-background rounded-2xl p-8 text-reveal transform transition-all duration-500 hover:translate-y-[-5px] hover:shadow-lg" style={{ transitionDelay: "0.1s" }}>
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6">
                 <span className="text-primary font-medium">02</span>
               </div>
@@ -193,7 +225,7 @@ const Index: React.FC = () => {
               </p>
             </div>
             
-            <div className="bg-background rounded-2xl p-8 text-reveal">
+            <div className="bg-background rounded-2xl p-8 text-reveal transform transition-all duration-500 hover:translate-y-[-5px] hover:shadow-lg" style={{ transitionDelay: "0.2s" }}>
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6">
                 <span className="text-primary font-medium">03</span>
               </div>
@@ -203,7 +235,7 @@ const Index: React.FC = () => {
               </p>
             </div>
             
-            <div className="bg-background rounded-2xl p-8 text-reveal">
+            <div className="bg-background rounded-2xl p-8 text-reveal transform transition-all duration-500 hover:translate-y-[-5px] hover:shadow-lg" style={{ transitionDelay: "0.3s" }}>
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6">
                 <span className="text-primary font-medium">04</span>
               </div>
@@ -213,7 +245,7 @@ const Index: React.FC = () => {
               </p>
             </div>
             
-            <div className="bg-background rounded-2xl p-8 text-reveal">
+            <div className="bg-background rounded-2xl p-8 text-reveal transform transition-all duration-500 hover:translate-y-[-5px] hover:shadow-lg" style={{ transitionDelay: "0.4s" }}>
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6">
                 <span className="text-primary font-medium">05</span>
               </div>
@@ -223,7 +255,7 @@ const Index: React.FC = () => {
               </p>
             </div>
             
-            <div className="bg-background rounded-2xl p-8 text-reveal">
+            <div className="bg-background rounded-2xl p-8 text-reveal transform transition-all duration-500 hover:translate-y-[-5px] hover:shadow-lg" style={{ transitionDelay: "0.5s" }}>
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6">
                 <span className="text-primary font-medium">06</span>
               </div>
@@ -246,7 +278,10 @@ const Index: React.FC = () => {
           <div className="text-center max-w-2xl mx-auto mb-16">
             <span className="text-sm font-medium text-primary/70 block mb-4">Gallery</span>
             <h2 className="text-3xl md:text-4xl font-display font-light tracking-tight mb-6 text-reveal">
-              Moments captured in sequence
+              Moments captured in <span className="relative inline-block">
+                sequence
+                <span className="absolute -bottom-1 left-0 w-full h-1 bg-primary/30 rounded-full"></span>
+              </span>
             </h2>
             <p className="text-muted-foreground text-reveal">
               A collection of still frames from our animation sequence, showcasing the beauty of each individual moment.
@@ -254,12 +289,16 @@ const Index: React.FC = () => {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-reveal">
-            {[1, 10, 20, 30, 40, 50].map((frame) => (
-              <div key={frame} className="overflow-hidden rounded-lg">
+            {[1, 10, 20, 30, 40, 50].map((frame, index) => (
+              <div 
+                key={frame} 
+                className="overflow-hidden rounded-lg group"
+                style={{ animationDelay: `${index * 0.15}s` }}
+              >
                 <img 
                   src={`/sequence/frame-${frame}.jpg`}
                   alt={`Frame ${frame}`}
-                  className="w-full aspect-[4/3] object-cover transition-transform duration-700 hover:scale-105"
+                  className="w-full aspect-[4/3] object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               </div>
             ))}
@@ -276,16 +315,19 @@ const Index: React.FC = () => {
         <div className="max-w-3xl mx-auto text-center">
           <span className="text-sm font-medium text-primary-foreground/70 block mb-4">Contact</span>
           <h2 className="text-3xl md:text-4xl font-display font-light tracking-tight mb-6 text-reveal">
-            Let's create something amazing together
+            Let's create something <span className="relative inline-block">
+              amazing
+              <span className="absolute -bottom-1 left-0 w-full h-1 bg-white/30 rounded-full"></span>
+            </span> together
           </h2>
           <p className="text-primary-foreground/80 mb-10 text-reveal">
             Interested in bringing your own scroll sequence to life? We'd love to hear from you and discuss how we can help with your project.
           </p>
           <a 
             href="#"
-            className="inline-flex items-center gap-2 bg-primary-foreground text-primary hover:bg-primary-foreground/90 px-6 py-3 rounded-md font-medium transition-colors duration-300 text-reveal"
+            className="inline-flex items-center gap-2 bg-primary-foreground text-primary hover:bg-primary-foreground/90 px-6 py-3 rounded-md font-medium transition-all duration-300 text-reveal hover:translate-y-[-2px] hover:shadow-lg"
           >
-            Get in touch <ArrowRight size={16} />
+            Get in touch <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
           </a>
         </div>
       </section>
