@@ -1,8 +1,8 @@
-
 import React, { useEffect, useRef } from 'react';
 import ScrollSequence from '@/components/ScrollSequence';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import PhysicsSocialButtons from '@/components/PhysicsSocialButtons';
 import { ArrowDown, ArrowRight, Sparkles } from 'lucide-react';
 
 const Index: React.FC = () => {
@@ -303,6 +303,13 @@ const Index: React.FC = () => {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+      
+      {/* Social Media Section with Physics */}
+      <section className="py-24 md:py-32 px-6 md:px-10 bg-background">
+        <div className="max-w-7xl mx-auto">
+          <PhysicsSocialButtons />
         </div>
       </section>
       
