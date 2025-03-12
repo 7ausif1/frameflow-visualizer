@@ -1,9 +1,9 @@
+
 import React, { useEffect, useRef } from 'react';
 import ScrollSequence from '@/components/ScrollSequence';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import PhysicsSocialButtons, { SocialButtonProps } from '@/components/PhysicsSocialButtons';
-import { ArrowDown, ArrowRight, Sparkles, Github, Youtube, Linkedin, Twitter } from 'lucide-react';
+import { ArrowDown, ArrowRight, Sparkles } from 'lucide-react';
 
 const Index: React.FC = () => {
   const aboutRef = useRef<HTMLDivElement>(null);
@@ -31,41 +31,11 @@ const Index: React.FC = () => {
     };
   }, []);
   
-  const customSocialButtons: SocialButtonProps[] = [
-    {
-      name: 'Twitter',
-      color: '#1DA1F2',
-      icon: Twitter,
-      link: 'https://twitter.com',
-      text: 'Twitter'
-    },
-    {
-      name: 'Github',
-      color: '#333',
-      icon: Github,
-      link: 'https://github.com',
-      text: 'Github'
-    },
-    {
-      name: 'Youtube',
-      color: '#FF0000',
-      icon: Youtube,
-      link: 'https://youtube.com',
-      text: 'Youtube'
-    },
-    {
-      name: 'LinkedIn',
-      color: '#0A66C2',
-      icon: Linkedin,
-      link: 'https://linkedin.com',
-      text: 'LinkedIn'
-    }
-  ];
-  
   return (
     <div className="relative">
       <Navbar />
       
+      {/* Hero Section with Scroll Sequence */}
       <ScrollSequence 
         totalFrames={99} 
         scrollHeight={300}
@@ -117,6 +87,7 @@ const Index: React.FC = () => {
         </div>
       </ScrollSequence>
 
+      {/* Second Sequence Example */}
       <ScrollSequence 
         totalFrames={99} 
         scrollHeight={200}
@@ -160,6 +131,7 @@ const Index: React.FC = () => {
         </div>
       </ScrollSequence>
       
+      {/* About Section */}
       <section 
         id="about" 
         ref={aboutRef}
@@ -212,6 +184,7 @@ const Index: React.FC = () => {
         </div>
       </section>
       
+      {/* Features Section */}
       <section 
         id="features" 
         ref={featuresRef}
@@ -295,6 +268,7 @@ const Index: React.FC = () => {
         </div>
       </section>
       
+      {/* Gallery Section */}
       <section 
         id="gallery" 
         ref={galleryRef}
@@ -332,24 +306,7 @@ const Index: React.FC = () => {
         </div>
       </section>
       
-      <section className="py-24 md:py-32 px-6 md:px-10 bg-background">
-        <div className="max-w-7xl mx-auto">
-          <PhysicsSocialButtons />
-          
-          <div className="mt-32">
-            <PhysicsSocialButtons 
-              title="Connect with us" 
-              subtitle="Try dragging these buttons!" 
-              buttons={customSocialButtons}
-              containerHeight={350}
-              buttonWidth={160}
-              buttonHeight={45}
-              backgroundColor="bg-primary/10"
-            />
-          </div>
-        </div>
-      </section>
-      
+      {/* Contact Section */}
       <section 
         id="contact" 
         ref={contactRef}
@@ -381,4 +338,3 @@ const Index: React.FC = () => {
 };
 
 export default Index;
-
