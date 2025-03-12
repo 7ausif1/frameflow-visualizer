@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import Matter, { Engine, Render, World, Bodies, Mouse, MouseConstraint, Body, Vector } from 'matter-js';
 import { Facebook, Twitter, Instagram, Github, Youtube, Linkedin, Mail, Globe, type LucideIcon } from 'lucide-react';
@@ -61,7 +62,7 @@ const PhysicsSocialButtons: React.FC<PhysicsSocialButtonsProps> = ({
   const updateButtonPositions = () => {
     const newPositions: {[key: string]: {x: number, y: number, angle: number}} = {};
     
-    rendererRef.current?.allBodies.forEach(body => {
+    engineRef.current.world.bodies.forEach(body => {
       if (buttons.some(btn => btn.name === body.label)) {
         newPositions[body.label] = {
           x: body.position.x,

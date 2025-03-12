@@ -3,7 +3,7 @@ import ScrollSequence from '@/components/ScrollSequence';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PhysicsSocialButtons, { SocialButtonProps } from '@/components/PhysicsSocialButtons';
-import { ArrowDown, ArrowRight, Sparkles, Github, Youtube, Linkedin } from 'lucide-react';
+import { ArrowDown, ArrowRight, Sparkles, Github, Youtube, Linkedin, Twitter } from 'lucide-react';
 
 const Index: React.FC = () => {
   const aboutRef = useRef<HTMLDivElement>(null);
@@ -31,7 +31,6 @@ const Index: React.FC = () => {
     };
   }, []);
   
-  // Example of custom social media buttons
   const customSocialButtons: SocialButtonProps[] = [
     {
       name: 'Twitter',
@@ -67,7 +66,6 @@ const Index: React.FC = () => {
     <div className="relative">
       <Navbar />
       
-      {/* Hero Section with Scroll Sequence */}
       <ScrollSequence 
         totalFrames={99} 
         scrollHeight={300}
@@ -119,7 +117,6 @@ const Index: React.FC = () => {
         </div>
       </ScrollSequence>
 
-      {/* Second Sequence Example */}
       <ScrollSequence 
         totalFrames={99} 
         scrollHeight={200}
@@ -163,7 +160,6 @@ const Index: React.FC = () => {
         </div>
       </ScrollSequence>
       
-      {/* About Section */}
       <section 
         id="about" 
         ref={aboutRef}
@@ -216,7 +212,6 @@ const Index: React.FC = () => {
         </div>
       </section>
       
-      {/* Features Section */}
       <section 
         id="features" 
         ref={featuresRef}
@@ -300,7 +295,6 @@ const Index: React.FC = () => {
         </div>
       </section>
       
-      {/* Gallery Section */}
       <section 
         id="gallery" 
         ref={galleryRef}
@@ -338,13 +332,10 @@ const Index: React.FC = () => {
         </div>
       </section>
       
-      {/* Social Media Section with Physics - Updated with custom configuration */}
       <section className="py-24 md:py-32 px-6 md:px-10 bg-background">
         <div className="max-w-7xl mx-auto">
-          {/* Default configuration */}
           <PhysicsSocialButtons />
           
-          {/* Custom configuration example */}
           <div className="mt-32">
             <PhysicsSocialButtons 
               title="Connect with us" 
@@ -359,7 +350,6 @@ const Index: React.FC = () => {
         </div>
       </section>
       
-      {/* Contact Section */}
       <section 
         id="contact" 
         ref={contactRef}
@@ -391,3 +381,4 @@ const Index: React.FC = () => {
 };
 
 export default Index;
+
