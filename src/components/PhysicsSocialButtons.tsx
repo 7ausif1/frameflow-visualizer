@@ -1,11 +1,11 @@
-
-import React, { useEffect, useRef } from 'react';
-import Matter, { Engine, Render, World, Bodies, Mouse, MouseConstraint } from 'matter-js';
+import React, { useEffect, useRef, useState } from 'react';
+import Matter, { Engine, Render, World, Bodies, Mouse, MouseConstraint, Body, Vector } from 'matter-js';
 import { Facebook, Twitter, Instagram } from 'lucide-react';
 
 const PhysicsSocialButtons = () => {
   const sceneRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef(Engine.create());
+  const [rendererCreated, setRendererCreated] = useState(false);
 
   useEffect(() => {
     if (!sceneRef.current) return;
@@ -14,17 +14,23 @@ const PhysicsSocialButtons = () => {
     const engine = engineRef.current;
     const world = engine.world;
 
+    // Calculate container dimensions
+    const containerWidth = sceneRef.current.clientWidth;
+    const containerHeight = 300;
+
     // Create renderer
     const render = Render.create({
       element: sceneRef.current,
       engine: engine,
       options: {
-        width: sceneRef.current.clientWidth,
-        height: 300,
+        width: containerWidth,
+        height: containerHeight,
         wireframes: false,
         background: 'transparent',
       }
     });
+
+    setRendererCreated(true);
 
     // Create bodies for social media buttons
     const buttons = [
@@ -48,29 +54,43 @@ const PhysicsSocialButtons = () => {
       }
     ];
 
+    // Calculate starting positions to spread buttons horizontally
+    const buttonWidth = 150;
+    const buttonHeight = 50;
+    const startingPositions = buttons.map((_, index) => {
+      return {
+        x: containerWidth / 4 + (index * containerWidth / 3),
+        y: -50 - (index * 50) // Start above the canvas
+      };
+    });
+
+    // Create button bodies with more size to accommodate text
     const buttonBodies = buttons.map((button, index) => {
       return Bodies.rectangle(
-        100 + (index * 150),
-        -50 - (index * 50), // Start above the canvas
-        120,
-        40,
+        startingPositions[index].x,
+        startingPositions[index].y,
+        buttonWidth,
+        buttonHeight,
         {
           render: {
             fillStyle: button.color,
+            strokeStyle: '#FFFFFF',
+            lineWidth: 2
           },
           label: button.name,
           restitution: 0.8,
           friction: 0.005,
+          density: 0.001, // Make buttons lighter
         }
       );
     });
 
     // Add all bodies to the world
     World.add(world, [
-      // Walls
-      Bodies.rectangle(render.canvas.width / 2, render.canvas.height + 30, render.canvas.width, 60, { isStatic: true }), // Ground
-      Bodies.rectangle(-30, render.canvas.height / 2, 60, render.canvas.height, { isStatic: true }), // Left wall
-      Bodies.rectangle(render.canvas.width + 30, render.canvas.height / 2, 60, render.canvas.height, { isStatic: true }), // Right wall
+      // Walls - we only add ground, left and right walls to keep buttons within view
+      Bodies.rectangle(containerWidth / 2, containerHeight + 30, containerWidth, 60, { isStatic: true }), // Ground
+      Bodies.rectangle(-30, containerHeight / 2, 60, containerHeight, { isStatic: true }), // Left wall
+      Bodies.rectangle(containerWidth + 30, containerHeight / 2, 60, containerHeight, { isStatic: true }), // Right wall
       ...buttonBodies
     ]);
 
@@ -93,6 +113,9 @@ const PhysicsSocialButtons = () => {
     Matter.Runner.run(engine);
     Render.run(render);
 
+    // Create an overlay of the actual buttons for easier interaction
+    // We'll render these buttons in the React component, positioned where the physics bodies are
+
     // Handle clicks on bodies
     Matter.Events.on(mouseConstraint, 'mouseup', (event) => {
       const body = mouseConstraint.body;
@@ -103,6 +126,25 @@ const PhysicsSocialButtons = () => {
         }
       }
     });
+
+    // Apply small random forces to keep buttons moving slightly
+    const applyRandomForces = () => {
+      buttonBodies.forEach(body => {
+        if (Math.random() > 0.7) {
+          const forceMagnitude = 0.0005;
+          Body.applyForce(
+            body,
+            { x: body.position.x, y: body.position.y },
+            Vector.create(
+              (Math.random() - 0.5) * forceMagnitude,
+              (Math.random() - 0.5) * forceMagnitude
+            )
+          );
+        }
+      });
+    };
+
+    const forceInterval = setInterval(applyRandomForces, 2000);
 
     // Handle window resize
     const handleResize = () => {
@@ -116,10 +158,13 @@ const PhysicsSocialButtons = () => {
 
     // Cleanup
     return () => {
+      clearInterval(forceInterval);
       Render.stop(render);
       World.clear(world, false);
       Engine.clear(engine);
-      render.canvas.remove();
+      if (render.canvas) {
+        render.canvas.remove();
+      }
       render.textures = {};
       window.removeEventListener('resize', handleResize);
     };
@@ -134,9 +179,25 @@ const PhysicsSocialButtons = () => {
         </span>
       </h2>
       <div 
-        ref={sceneRef} 
-        className="w-full bg-secondary/30 rounded-xl backdrop-blur-sm"
-      />
+        className="w-full rounded-xl bg-secondary/30 backdrop-blur-sm p-4 overflow-hidden"
+        style={{ height: '320px' }} // Fixed height container with padding
+      >
+        <div 
+          ref={sceneRef} 
+          className="w-full h-full rounded-lg relative"
+        >
+          {rendererCreated && (
+            <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+              <div className="text-sm text-center text-muted-foreground">
+                Drag and play with the buttons!
+              </div>
+            </div>
+          )}
+          
+          {/* We overlay the buttons with actual texts here */}
+          <canvas className="w-full h-full rounded-lg"></canvas>
+        </div>
+      </div>
     </div>
   );
 };
