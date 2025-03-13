@@ -3,6 +3,7 @@ import ScrollSequence from '@/components/ScrollSequence';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ServicesSection from '@/components/ServicesSection';
+import AnimatedText from '@/components/AnimatedText';
 import { ArrowDown, ArrowRight, Sparkles } from 'lucide-react';
 
 const Index: React.FC = () => {
@@ -31,6 +32,48 @@ const Index: React.FC = () => {
       elements.forEach((el) => observer.unobserve(el));
     };
   }, []);
+  
+  // Services data
+  const services = [
+    {
+      title: "Interactive Scroll Experiences",
+      description: "We create immersive scroll-based interactions that engage users and tell your brand story through motion and animation.",
+      link: "#"
+    },
+    {
+      title: "Visual Design & Branding",
+      description: "From logo design to comprehensive brand systems, we craft visual identities that communicate your unique value proposition.",
+      link: "#"
+    },
+    {
+      title: "Web Development",
+      description: "We build fast, responsive, and accessible websites that work flawlessly across all devices and platforms.",
+      link: "#"
+    },
+    {
+      title: "Motion Design",
+      description: "Adding thoughtful animations and transitions to enhance user experience and bring your digital products to life.",
+      link: "#"
+    },
+    {
+      title: "UI/UX Design",
+      description: "User-centered design approaches that balance beautiful interfaces with intuitive, frictionless user experiences.",
+      link: "#"
+    }
+  ];
+  
+  // Custom animation configuration for services
+  const serviceAnimationConfig = {
+    startRotation: 5,
+    endRotation: 0,
+    startOpacity: 0.7,
+    endOpacity: 1,
+    scrubAmount: 0.5,
+    duration: 0.8,
+    ease: "power2.out",
+    startTrigger: "top 80%",
+    endTrigger: "top 60%"
+  };
   
   return (
     <div className="relative">
@@ -142,18 +185,37 @@ const Index: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
             <div>
               <span className="text-sm font-medium text-primary/70 block mb-4">About</span>
-              <h2 className="text-3xl md:text-4xl font-display font-light tracking-tight mb-6 text-reveal">
-                The perfect blend of <span className="relative inline-block">
-                  motion
-                  <span className="absolute -bottom-1 left-0 w-full h-1 bg-primary/30 rounded-full"></span>
-                </span> and design
+              <h2 className="text-3xl md:text-4xl font-display font-light tracking-tight mb-6">
+                <AnimatedText 
+                  text="The perfect blend of motion and design"
+                  highlightedText="motion"
+                  startOpacity={0.7}
+                  endOpacity={1}
+                  startTrigger="top 85%"
+                  endTrigger="top 65%"
+                  scrubAmount={0.4}
+                />
               </h2>
-              <p className="text-muted-foreground mb-6 text-reveal">
-                Inspired by minimalist design principles, Sequence creates an immersive visual journey that engages users through subtle animations and thoughtful interaction.
-              </p>
-              <p className="text-muted-foreground text-reveal">
-                We believe in the power of simplicity and focus on creating experiences that are both beautiful and functional.
-              </p>
+              <AnimatedText
+                text="Inspired by minimalist design principles, Sequence creates an immersive visual journey that engages users through subtle animations and thoughtful interaction."
+                element="p"
+                className="text-muted-foreground mb-6"
+                startOpacity={0.7}
+                endOpacity={1}
+                startTrigger="top 80%"
+                endTrigger="top 60%"
+                scrubAmount={0.3}
+              />
+              <AnimatedText
+                text="We believe in the power of simplicity and focus on creating experiences that are both beautiful and functional."
+                element="p"
+                className="text-muted-foreground"
+                startOpacity={0.7}
+                endOpacity={1}
+                startTrigger="top 80%"
+                endTrigger="top 60%"
+                scrubAmount={0.3}
+              />
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
@@ -187,7 +249,10 @@ const Index: React.FC = () => {
       
       {/* Services Section */}
       <div ref={servicesRef}>
-        <ServicesSection />
+        <ServicesSection 
+          services={services}
+          animationConfig={serviceAnimationConfig}
+        />
       </div>
       
       {/* Features Section */}
