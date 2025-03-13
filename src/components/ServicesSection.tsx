@@ -17,9 +17,14 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ title, description, index, li
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('rotate-0');
-            entry.target.classList.remove('opacity-70');
-            entry.target.classList.add('opacity-100');
+            // When element enters viewport, add these classes
+            cardRef.current?.classList.add('rotate-0', 'opacity-100');
+            cardRef.current?.classList.remove('opacity-70');
+            
+            // Once the animation has completed, unobserve
+            setTimeout(() => {
+              observer.unobserve(entry.target);
+            }, 800);
           }
         });
       },
