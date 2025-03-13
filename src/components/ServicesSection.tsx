@@ -1,6 +1,11 @@
 
 import React, { useEffect, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+// Register ScrollTrigger plugin with GSAP
+gsap.registerPlugin(ScrollTrigger);
 
 interface ServiceCardProps {
   title: string;
@@ -13,45 +18,42 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ title, description, index, li
   const cardRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // When element enters viewport, add these classes
-            cardRef.current?.classList.add('rotate-0', 'opacity-100');
-            cardRef.current?.classList.remove('opacity-70');
-            
-            // Once the animation has completed, unobserve
-            setTimeout(() => {
-              observer.unobserve(entry.target);
-            }, 800);
-          }
-        });
-      },
-      { 
-        threshold: 0.3,
-        rootMargin: "-100px 0px"
-      }
-    );
-    
-    if (cardRef.current) {
-      observer.observe(cardRef.current);
+    // Set initial state if not first card
+    if (index !== 0 && cardRef.current) {
+      gsap.set(cardRef.current, {
+        rotation: 5,
+        opacity: 0.7,
+        transformOrigin: 'top right'
+      });
     }
     
-    return () => {
-      if (cardRef.current) {
-        observer.unobserve(cardRef.current);
+    // Create animation for each card
+    const animation = gsap.to(cardRef.current, {
+      rotation: 0,
+      opacity: 1,
+      duration: 0.8,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: cardRef.current,
+        start: "top 80%", // Start animation when the top of the element hits 80% from the top of viewport
+        end: "top 50%",   // End animation when the top of the element hits 50% from the top of viewport
+        scrub: 0.5,       // Smooth scrubbing effect
+        once: true,       // Only animate once
+        // markers: true,    // Uncomment for debugging
       }
+    });
+    
+    return () => {
+      // Clean up animation when component unmounts
+      animation.kill();
     };
-  }, []);
+  }, [index]);
   
   return (
     <div 
       ref={cardRef}
       className={`
         bg-background border border-border p-10 md:p-12 rounded-2xl shadow-sm
-        transition-all duration-700 ease-out
-        ${index === 0 ? 'rotate-0 opacity-100' : 'rotate-[5deg] opacity-70 origin-top-right'}
         mb-8 md:mb-16
       `}
     >
