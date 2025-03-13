@@ -46,7 +46,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ title, description, index, li
       className={`
         bg-background border border-border p-10 md:p-12 rounded-2xl shadow-sm
         transition-all duration-700 ease-out
-        ${index === 0 ? 'rotate-0 opacity-100' : 'rotate-[20deg] opacity-70 origin-top-right'}
+        ${index === 0 ? 'rotate-0 opacity-100' : 'rotate-[5deg] opacity-70 origin-top-right'}
         mb-8 md:mb-16
       `}
     >
