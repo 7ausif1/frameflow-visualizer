@@ -1,8 +1,8 @@
-
 import React, { useEffect, useRef } from 'react';
 import ScrollSequence from '@/components/ScrollSequence';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import ServicesSection from '@/components/ServicesSection';
 import { ArrowDown, ArrowRight, Sparkles } from 'lucide-react';
 
 const Index: React.FC = () => {
@@ -10,6 +10,7 @@ const Index: React.FC = () => {
   const featuresRef = useRef<HTMLDivElement>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
+  const servicesRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -183,6 +184,11 @@ const Index: React.FC = () => {
           </div>
         </div>
       </section>
+      
+      {/* Services Section */}
+      <div ref={servicesRef}>
+        <ServicesSection />
+      </div>
       
       {/* Features Section */}
       <section 
